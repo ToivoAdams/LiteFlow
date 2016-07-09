@@ -5,4 +5,4 @@ Lightweight dataflow framework provides a simple model for building applications
 
 ![ExampleFlow](/docs/images/ConvertAddNumbersFlow.png)
 <br>
-Very simple flow example
+Very simple flow example.
