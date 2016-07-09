@@ -7,7 +7,7 @@ package lite.flow.example.component;
  */
 public class StringToInt {
 
-	public int transform( String str) {
+	public int number( String str) {
 		return Integer.parseInt(str);
 	}
 }

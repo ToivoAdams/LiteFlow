@@ -1,17 +1,18 @@
 package lite.flow.example.component;
 
+import lite.flow.api.activity.Entry;
 
 /**
  * Simple component which performs addition of numbers.
  * 
  * Note!!! component is without explicit Output port!
- * Method result is treated by framework automatically as output port.
- * And method name is output name.
+ * Instead @Entry annotation is used to define input and output names.
  * 
  *	@author ToivoAdams
  */
-public class Adder {
+public class Adder2 {
 
+	@Entry(outName="result", inNames={"avalue","bvalue"})
 	public int number( int a, int b) {
 		return a + b;
 	}
