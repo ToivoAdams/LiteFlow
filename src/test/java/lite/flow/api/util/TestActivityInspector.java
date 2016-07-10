@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import lite.flow.api.activity.Entry;
 import lite.flow.api.activity.Output;
 import lite.flow.api.util.ActivityInspector.InspectResult;
 
@@ -66,5 +67,35 @@ public class TestActivityInspector {
 		assertThat("Output names should contain name", inspectResult.outputNames, hasItemInArray("doSomething"));
 		assertEquals("Number of outputs should be", 2, inspectResult.outputNames.length);		
 	}
+
+	/**
+	 *	When one or more method is marked with Entry annotation, 
+	 * only such methods are considered Entry points.
+	 * Other public methods without Entry annotation are not Entry points anymore.
+	 */
+	class SimpleComponentWithEntryAnnotation {
+		
+		@Entry(outName="result", inNames={"avalue","bvalue"})		
+		public int add(int a, int b) {
+			return a+b;
+		}
+		
+		public void doSomething(String name) {
+			return;
+		}
+	}
+
+	@Test
+	public void testInspectSimpleComponentWithEntryAnnotation() {
+		InspectResult inspectResult = ActivityInspector.inspect(SimpleComponentWithEntryAnnotation.class);
+		
+		assertThat("Input names should contain name", inspectResult.getInputNames(), hasItemInArray("avalue"));
+		assertThat("Input names should contain name", inspectResult.getInputNames(), hasItemInArray("bvalue"));
+		assertEquals("Number of inputs should be", 2, inspectResult.getInputNames().length);
+
+		assertThat("Output names should contain name", inspectResult.outputNames, hasItemInArray("result"));
+		assertEquals("Number of outputs should be", 1, inspectResult.outputNames.length);		
+	}
+
 
 }

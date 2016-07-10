@@ -19,7 +19,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import org.apache.commons.lang3.reflect.MethodUtils;
 
+import lite.flow.api.activity.Entry;
 import lite.flow.api.activity.Output;
 
 
@@ -37,16 +39,16 @@ public class ActivityInspector {
 		EntryPoint[] entryPoints = getEntryPoints(clazz);
 		String[] outputNames = getOutputNames(clazz);
 		if ((outputNames==null || outputNames.length<1) && entryPoints!=null) {
-			// when we don't have any Output defined, entry methods names become output names
+			// when we don't have any Output defined, entry methods defines output names
 			outputNames = new String[entryPoints.length];
 			int i = 0;
 			for (EntryPoint entryPoint : entryPoints) {
-				outputNames[i++] = entryPoint.method.getName();
+				outputNames[i++] = entryPoint.outputName;
 			}
 		}
 		return new InspectResult(entryPoints, outputNames);
 	}
-	
+
 	public static class InspectResult {
 		public final EntryPoint[]	entryPoints;
 		public final String[]		outputNames;
@@ -64,25 +66,31 @@ public class ActivityInspector {
 	public static class EntryPoint {
 		public final Method method;
 		public final String[] inputNames;
-		public EntryPoint(Method method, String[] inputNames) {
+		public final String outputName;
+		public EntryPoint(Method method, String[] inputNames, String outputName) {
 			super();
 			this.method = method;
 			this.inputNames = inputNames;
+			this.outputName = outputName;
 		}		
 	}
 
 	static public EntryPoint[] getEntryPoints(Class<?> clazz) {
 		
+		EntryPoint[] entryPoints = getEntryAnnotatedMethods(clazz);
+		if (entryPoints!=null && entryPoints.length>0)
+			return entryPoints;
+		
 		ArrayList<Method> entryMethods = getEntryMethods(clazz);
-		EntryPoint[] inputGroups = new EntryPoint[entryMethods.size()];
+		entryPoints = new EntryPoint[entryMethods.size()];
 				
 		int i = 0;
 		for (Method entryMethod : entryMethods) {
 			String[] inputNames = getArgumentNames(entryMethod);
-			EntryPoint inputGroup = new EntryPoint(entryMethod, inputNames);
-			inputGroups[i++] = inputGroup;
+			EntryPoint entryPoint = new EntryPoint(entryMethod, inputNames, entryMethod.getName());
+			entryPoints[i++] = entryPoint;
 		}
-		return inputGroups;
+		return entryPoints;
 	}
 
 	static public String[] getOutputNames(Class<?> clazz) {
@@ -151,6 +159,20 @@ public class ActivityInspector {
 				allInputNames[i++] = name;
 
 		return allInputNames;
+	}
+
+	protected static EntryPoint[] getEntryAnnotatedMethods(Class<?> clazz) {
+		Method[] methods = MethodUtils.getMethodsWithAnnotation(clazz, Entry.class);
+
+		EntryPoint[] entryPoints = new EntryPoint[methods.length];
+		for (int i = 0; i < methods.length; i++) {
+			Method method = methods[i];
+			Entry annotation = method.getAnnotation(Entry.class);
+			EntryPoint entryPoint = new EntryPoint(method, annotation.inNames(), annotation.outName());
+			entryPoints[i] = entryPoint;
+		}
+
+		return entryPoints;
 	}
 
 }
