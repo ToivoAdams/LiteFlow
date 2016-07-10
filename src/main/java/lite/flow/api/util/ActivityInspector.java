@@ -33,6 +33,58 @@ import lite.flow.api.activity.Output;
  */
 public class ActivityInspector {
 	
+	public static final InspectResult inspect(Class<?> clazz) {
+		EntryPoint[] entryPoints = getEntryPoints(clazz);
+		String[] outputNames = getOutputNames(clazz);
+		if ((outputNames==null || outputNames.length<1) && entryPoints!=null) {
+			// when we don't have any Output defined, entry methods names become output names
+			outputNames = new String[entryPoints.length];
+			int i = 0;
+			for (EntryPoint entryPoint : entryPoints) {
+				outputNames[i++] = entryPoint.method.getName();
+			}
+		}
+		return new InspectResult(entryPoints, outputNames);
+	}
+	
+	public static class InspectResult {
+		public final EntryPoint[]	entryPoints;
+		public final String[]		outputNames;
+		public InspectResult(EntryPoint[] entryPoints, String[] outputNames) {
+			super();
+			this.entryPoints = entryPoints;
+			this.outputNames = outputNames;
+		}
+		
+		public String[] getInputNames() {
+			return flat(entryPoints);
+		}
+	}
+
+	public static class EntryPoint {
+		public final Method method;
+		public final String[] inputNames;
+		public EntryPoint(Method method, String[] inputNames) {
+			super();
+			this.method = method;
+			this.inputNames = inputNames;
+		}		
+	}
+
+	static public EntryPoint[] getEntryPoints(Class<?> clazz) {
+		
+		ArrayList<Method> entryMethods = getEntryMethods(clazz);
+		EntryPoint[] inputGroups = new EntryPoint[entryMethods.size()];
+				
+		int i = 0;
+		for (Method entryMethod : entryMethods) {
+			String[] inputNames = getArgumentNames(entryMethod);
+			EntryPoint inputGroup = new EntryPoint(entryMethod, inputNames);
+			inputGroups[i++] = inputGroup;
+		}
+		return inputGroups;
+	}
+
 	static public String[] getOutputNames(Class<?> clazz) {
 		
 		ArrayList<Field>  outputs = getOutputs(clazz);
@@ -43,31 +95,7 @@ public class ActivityInspector {
 		}
 		return outputNames;
 	}
-
-	public static class InputGroup {
-		public final Method method;
-		public final String[] inputNames;
-		public InputGroup(Method method, String[] inputNames) {
-			super();
-			this.method = method;
-			this.inputNames = inputNames;
-		}		
-	}
 	
-	static public InputGroup[] getInputs(Class<?> clazz) {
-		
-		ArrayList<Method> entryMethods = getEntryMethods(clazz);
-		InputGroup[] inputGroups = new InputGroup[entryMethods.size()];
-				
-		int i = 0;
-		for (Method entryMethod : entryMethods) {
-			String[] inputNames = getArgumentNames(entryMethod);
-			InputGroup inputGroup = new InputGroup(entryMethod, inputNames);
-			inputGroups[i++] = inputGroup;
-		}
-		return inputGroups;
-	}
-
 	static public ArrayList<Field> getOutputs(Class<?> clazz) {
 		
 		ArrayList<Field> outputs = new ArrayList<>();
@@ -108,6 +136,21 @@ public class ActivityInspector {
 		}
 		
 		return names;
+	}
+
+	protected static String[] flat(EntryPoint[] entryPoints) {
+		int totalInputs = 0;
+		for (EntryPoint entryPoint : entryPoints) {
+			totalInputs += entryPoint.inputNames.length;
+		}
+		
+		int i = 0; 
+		String[] allInputNames = new String[totalInputs];
+		for (EntryPoint entryPoint : entryPoints)
+			for (String name : entryPoint.inputNames)
+				allInputNames[i++] = name;
+
+		return allInputNames;
 	}
 
 }
