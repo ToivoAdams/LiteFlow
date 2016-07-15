@@ -15,6 +15,8 @@
  */
 package lite.flow.api.util;
 
+import static java.util.Objects.requireNonNull;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -38,24 +40,28 @@ public class ActivityInspector {
 	public static final InspectResult inspect(Class<?> clazz) {
 		EntryPoint[] entryPoints = getEntryPoints(clazz);
 		String[] outputNames = getOutputNames(clazz);
+		boolean withoutExplicitOutputPort = false;
 		if ((outputNames==null || outputNames.length<1) && entryPoints!=null) {
 			// when we don't have any Output defined, entry methods defines output names
+			withoutExplicitOutputPort = true;
 			outputNames = new String[entryPoints.length];
 			int i = 0;
 			for (EntryPoint entryPoint : entryPoints) {
 				outputNames[i++] = entryPoint.outputName;
 			}
 		}
-		return new InspectResult(entryPoints, outputNames);
+		return new InspectResult(entryPoints, outputNames, withoutExplicitOutputPort);
 	}
 
 	public static class InspectResult {
 		public final EntryPoint[]	entryPoints;
 		public final String[]		outputNames;
-		public InspectResult(EntryPoint[] entryPoints, String[] outputNames) {
+		public final boolean 		withoutExplicitOutputPort;
+		public InspectResult(EntryPoint[] entryPoints, String[] outputNames, boolean withoutExplicitOutputPort) {
 			super();
 			this.entryPoints = entryPoints;
 			this.outputNames = outputNames;
+			this.withoutExplicitOutputPort = withoutExplicitOutputPort;
 		}
 		
 		public String[] getInputNames() {
@@ -68,7 +74,9 @@ public class ActivityInspector {
 		public final String[] inputNames;
 		public final String outputName;
 		public EntryPoint(Method method, String[] inputNames, String outputName) {
-			super();
+			requireNonNull(method, "EntryPoint() inputNames should not be null");
+			requireNonNull(inputNames, "EntryPoint() inputNames should not be null");
+			requireNonNull(outputName, "EntryPoint() outputName should not be null");
 			this.method = method;
 			this.inputNames = inputNames;
 			this.outputName = outputName;

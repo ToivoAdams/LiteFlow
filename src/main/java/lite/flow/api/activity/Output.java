@@ -25,15 +25,9 @@ package lite.flow.api.activity;
  */
 public class Output<T> {
 
-	protected Emitter emitter;
-	
-	public Output() {
-		
-	}
-
 	public void emit(T data) {
-
-		emitter.emit(data);
 	}
 
+	public void emit(T data, RequestContext requestContext) {
+	}
 }

@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package lite.log.api;
+package lite.flow.api.util;
 
-import java.util.logging.Logger;
+public interface UniqueId {
 
-public interface LogFactory {
+	/**
+	 * 	Return true when current UniqueId is created from parentId  
+	 * 
+	 * @param parentId
+	 * @return
+	 */
+	public boolean isCreatedFrom(UniqueId parentId);
 	
-	public UniqueId newCid();
+	public String getIdValue();
 	
-	public Logger logger();
 }

@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package lite.log.api;
+package lite.flow.api.activity;
+
+import lite.flow.api.util.UniqueId;
 
 /**
  * Encapsulates information about an request. 
