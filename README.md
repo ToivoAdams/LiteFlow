@@ -11,5 +11,5 @@ LiteFlowApi contains API for activities and flows creation.
 Very simple flow example.
 
 <br>
-Another example
+Another example ...
 ![CachedFactorialFlow](/docs/images/fact10.gif)
