@@ -21,10 +21,15 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 
 import lite.flow.api.activity.Entry;
 import lite.flow.api.activity.Output;
+import lite.flow.api.activity.Parameter;
 
 
 /**
@@ -50,20 +55,39 @@ public class ActivityInspector {
 				outputNames[i++] = entryPoint.outputName;
 			}
 		}
-		return new InspectResult(entryPoints, outputNames, withoutExplicitOutputPort);
+		
+		FieldInfo[] resources = discoverResources(clazz);
+		FieldInfo[] parameters = discoverParameters(clazz);
+		
+		return new InspectResult(entryPoints, outputNames, withoutExplicitOutputPort, resources, parameters);
+	}
+
+	public static class FieldInfo {
+		public final String name;
+		public final Class<?> type;
+		public FieldInfo(String name, Class<?> type) {
+			super();
+			this.name = name;
+			this.type = type;
+		}
 	}
 
 	public static class InspectResult {
 		public final EntryPoint[]	entryPoints;
 		public final String[]		outputNames;
 		public final boolean 		withoutExplicitOutputPort;
-		public InspectResult(EntryPoint[] entryPoints, String[] outputNames, boolean withoutExplicitOutputPort) {
+		public final FieldInfo[]	resources;
+		public final FieldInfo[]	parameters;
+		public InspectResult(EntryPoint[] entryPoints, String[] outputNames, boolean withoutExplicitOutputPort
+				, FieldInfo[] resources, FieldInfo[] parameters) {
 			super();
 			this.entryPoints = entryPoints;
 			this.outputNames = outputNames;
 			this.withoutExplicitOutputPort = withoutExplicitOutputPort;
+			this.resources = resources;
+			this.parameters = parameters;
 		}
-		
+
 		public String[] getInputNames() {
 			return flat(entryPoints);
 		}
@@ -182,5 +206,28 @@ public class ActivityInspector {
 
 		return entryPoints;
 	}
+
+	protected static FieldInfo[] discoverParameters(Class<?> clazz) {
+		Field[] fields = FieldUtils.getFieldsWithAnnotation(clazz, Parameter.class);
+		FieldInfo[] fieldInfos = new FieldInfo[fields.length];
+		for (int i = 0; i < fieldInfos.length; i++) {
+			Field field = fields[i];
+			fieldInfos[i] = new FieldInfo(field.getName(), field.getType());
+		}
+
+		return fieldInfos;
+	}
+
+	protected static FieldInfo[] discoverResources(Class<?> clazz) {
+		Field[] fields = FieldUtils.getFieldsWithAnnotation(clazz, Resource.class);
+		FieldInfo[] fieldInfos = new FieldInfo[fields.length];
+		for (int i = 0; i < fieldInfos.length; i++) {
+			Field field = fields[i];
+			fieldInfos[i] = new FieldInfo(field.getName(), field.getType());
+		}
+
+		return fieldInfos;
+	}
+
 
 }
