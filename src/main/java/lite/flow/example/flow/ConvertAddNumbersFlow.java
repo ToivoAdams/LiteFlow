@@ -20,6 +20,8 @@ public class ConvertAddNumbersFlow {
 			.connect("ConvertAtoInt", 	"number", "Adder", "a")
 			.connect("ConvertBtoInt", 	"number", "Adder", "b")
 			
-			.get();
+			.flowInput("NumbersString", "StringSplitter", "str")
+			.flowOutput("ResultNumber", "Adder", "number")
 
+			.get();
 }
