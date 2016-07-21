@@ -43,6 +43,7 @@ import lite.flow.api.activity.Parameter;
 public class ActivityInspector {
 	
 	public static final InspectResult inspect(Class<?> clazz) {
+		requireNonNull(clazz, "ActivityInspector.inspect: component clazz should not be null");				
 		EntryPoint[] entryPoints = getEntryPoints(clazz);
 		String[] outputNames = getOutputNames(clazz);
 		boolean withoutExplicitOutputPort = false;

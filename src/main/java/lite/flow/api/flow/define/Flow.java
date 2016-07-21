@@ -16,6 +16,7 @@
 package lite.flow.api.flow.define;
 
 import java.util.Arrays;
+import java.util.Map;
 
 /**
  * 	Used to define Flow.
@@ -32,7 +33,7 @@ public class Flow {
 
 	final public InputConnection[]	flowInputs;
 	final public OutputConnection[] flowOutputs;
-	
+
 	
 	public Flow(String flowName, Activity[] activities, Connection[] connections, InputConnection[] flowInputs, OutputConnection[] flowOutputs) {
 		super();

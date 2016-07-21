@@ -15,15 +15,22 @@
  */
 package lite.flow.api.flow.define;
 
+import static java.util.Objects.requireNonNull;
 import static lite.flow.api.util.ActivityInspector.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class Component extends Activity {
-	public final Class<?> 	clazz;
+	public final Class<?> 	componentClazz;
 
-	public Component(Class<?> clazz, String	name, int x, int y) {
-		super(name, inspect(clazz).getInputNames(), inspect(clazz).outputNames, x, y);
-		this.clazz = clazz;
+	public Map<String, Object> parameters = new HashMap<>();
+	
+	
+	public Component(Class<?> componentClazz, String name, int x, int y) {
+		super(name, inspect(componentClazz).getInputNames(), inspect(componentClazz).outputNames, x, y);
+		this.componentClazz = componentClazz;
 	}
 
 	public int maxNumberOfPorts() {
@@ -36,7 +43,7 @@ public class Component extends Activity {
 
 	@Override
 	public String toString() {
-		return "Component [clazz=" + clazz.getSimpleName() + ", name=" + name + ", inputNames=" + inputNames + ", outputNames=" + outputNames + ", x=" + x
+		return "Component [clazz=" + componentClazz.getSimpleName() + ", name=" + name + ", inputNames=" + inputNames + ", outputNames=" + outputNames + ", x=" + x
 				+ ", y=" + y + "]";
 	}
 	
