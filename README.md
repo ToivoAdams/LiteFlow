@@ -39,5 +39,16 @@ From initial concept, design and development, operation, maintenance and support
 Very simple flow example.
 
 <br>
-Another example ...
-![CachedFactorialFlow](/docs/images/fact10.gif)
+
+##### Factorial calculation service demo
+
+Calculating factorial can be time consuming.
+Adding standard cache component to flow helps to save time and processing power. 
+
+First time factorial will be calculated and stored in cache.
+![CachedFactorialFlow](/docs/images/fact11a.gif)
+
+Second time result value will be taken from cache.
+![CachedFactorialFlow](/docs/images/fact11b.gif)
+
+ 
