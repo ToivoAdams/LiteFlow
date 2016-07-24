@@ -25,12 +25,19 @@ import java.util.Map;
 public class Component extends Activity {
 	public final Class<?> 	componentClazz;
 
-	public Map<String, Object> parameters = new HashMap<>();
+	public final Map<String, Object> parameters;
 	
 	
 	public Component(Class<?> componentClazz, String name, int x, int y) {
 		super(name, inspect(componentClazz).getInputNames(), inspect(componentClazz).outputNames, x, y);
 		this.componentClazz = componentClazz;
+		this.parameters = new HashMap<>();
+	}
+
+	public Component(Class<?> componentClazz, String name, int x, int y, Map<String, Object> parameters) {
+		super(name, inspect(componentClazz).getInputNames(), inspect(componentClazz).outputNames, x, y);
+		this.componentClazz = componentClazz;
+		this.parameters = parameters;
 	}
 
 	public int maxNumberOfPorts() {

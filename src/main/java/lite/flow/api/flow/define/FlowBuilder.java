@@ -45,6 +45,47 @@ public class FlowBuilder {
 		return new FlowBuilder(flowName);
 	}
 	
+	public class ComponentBuilder {
+		
+		private final FlowBuilder flowBuilder;
+		private final Component component;
+
+		public ComponentBuilder(FlowBuilder flowBuilder,Component component) {
+			super();
+			this.flowBuilder = flowBuilder;
+			this.component = component;
+		}
+		
+		public ComponentBuilder component(String componentName, Class<?> clazz, int x, int y) {
+			Component component2 = new Component(clazz, componentName, x, y); 
+			activities.add(component2);
+			return new ComponentBuilder(flowBuilder, component2);
+		}
+
+		public FlowBuilder connect(String from, String fromPort, String to, String toPort) {
+			return flowBuilder.connect(from, fromPort, to, toPort);
+		}
+
+		public FlowBuilder flowInput(String inputName, String to, String toPort) {
+			return flowBuilder.flowInput(inputName, to, toPort);
+		}
+		
+		public FlowBuilder flowOutput(String outputName, String from, String fromPort) {
+			return flowBuilder.flowOutput(outputName, from, fromPort);
+		}
+
+		public Flow get() {
+			return flowBuilder.get();
+		}	
+
+		public ComponentBuilder parameter(String key, Object value) {
+			component.parameters.put(key, value);
+			return this;
+		}
+
+	}
+	
+	
 	/**
 	 * Used to define component which is Java class based.
 	 * @param componentName
@@ -53,9 +94,11 @@ public class FlowBuilder {
 	 * @param y
 	 * @return
 	 */
-	public FlowBuilder component(String componentName, Class<?> clazz, int x, int y) {
-		activities.add(new Component(clazz, componentName, x, y));
-		return this;
+//	public FlowBuilder component(String componentName, Class<?> clazz, int x, int y) {
+	public ComponentBuilder component(String componentName, Class<?> clazz, int x, int y) {
+		Component component = new Component(clazz, componentName, x, y); 
+		activities.add(component);
+		return new ComponentBuilder(this, component);
 	}	
 
 	/**
