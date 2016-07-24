@@ -16,7 +16,7 @@
 package lite.flow.api.flow.define;
 
 import static java.util.Objects.requireNonNull;
-import static lite.flow.api.util.ActivityInspector.*;
+import static lite.flow.util.ActivityInspector.*;
 
 import java.util.HashMap;
 import java.util.Map;

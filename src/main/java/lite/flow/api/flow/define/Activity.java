@@ -47,5 +47,4 @@ public abstract class Activity {
 		this.y = y;
 	}
 
-
 }

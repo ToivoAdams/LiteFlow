@@ -7,7 +7,8 @@ import org.junit.Test;
 
 import lite.flow.api.activity.Entry;
 import lite.flow.api.activity.Output;
-import lite.flow.api.util.ActivityInspector.InspectResult;
+import lite.flow.util.ActivityInspector;
+import lite.flow.util.ActivityInspector.InspectResult;
 
 public class TestActivityInspector {
 

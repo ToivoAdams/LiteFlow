@@ -15,7 +15,7 @@
  */
 package lite.flow.api.activity;
 
-import lite.flow.api.util.UniqueId;
+import lite.flow.util.UniqueId;
 
 /**
  * Encapsulates information about an request. 
